@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/users/{id}', [UserController::class, 'findById']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
 });
 
 // Route::post('/users', [UserController::class, 'create']);

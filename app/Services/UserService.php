@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -42,8 +43,6 @@ class UserService
                     'email' => $user->email,
                     'phone' => $user->phone,
                     'lastname' => $user->lastname,
-                    'image' => $user->image,
-                    'notification_token' => $user->id,
                     'roles' => $user->roles->map(function ($role) {
                         return [
                             'id' => $role->id,
@@ -76,8 +75,8 @@ class UserService
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'lastname' => $user->lastname,
-                'image' => $user->image,
-                'notification_token' => $user->id,
+                'image' => $user->image ? url($user->image) : $user->image,
+                'notification_token' => $user->name,
                 'roles' => $user->roles->map(function ($role) {
                     return [
                         'id' => $role->id,
@@ -94,5 +93,37 @@ class UserService
     public function findById(int $id): ?User
     {
         return User::with('roles')->findOrFail($id);
+    }
+
+    public function update(int $id, UpdateUserRequest $request)
+    {
+        return DB::transaction(function () use ($id, $request) {
+            $user = User::with('roles')->findOrFail($id);
+
+            if ($request->filled('name')) {
+                $user->name = $request->input('name');
+            }
+
+            if ($request->filled('lastname')) {
+                $user->lastname = $request->input('lastname');
+            }
+
+            if ($request->filled('phone')) {
+                $user->phone = $request->input('phone');
+            }
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $path = $file->store("users/{$user->id}", 'public');
+                $user->image = '/storage/'.$path;
+            }
+
+            $user->save();
+
+            $user->image = url($user->image);
+
+            return $user;
+
+        });
     }
 }
