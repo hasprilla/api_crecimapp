@@ -5,20 +5,8 @@ namespace App\Models {
     /**
      * App\Models\Role
      *
-     * @property \Illuminate\Support\Carbon $updated_at
-     * @property \Illuminate\Support\Carbon $created_at
-     * @property string $route
-     * @property string $image
-     * @property string $name
-     * @property string $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
      * @property-read int|null $users_count
-     * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role whereImage($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role whereRoute($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Role>|Role query()
@@ -322,28 +310,8 @@ namespace App\Models {
     /**
      * App\Models\User
      *
-     * @property \Illuminate\Support\Carbon $updated_at
-     * @property \Illuminate\Support\Carbon $created_at
-     * @property string|null $notification_token
-     * @property string $password
-     * @property string|null $image
-     * @property string $phone
-     * @property string $email
-     * @property string $lastname
-     * @property string $name
-     * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
      * @property-read int|null $roles_count
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereLastname($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePhone($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereImage($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereNotificationToken($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User query()
@@ -647,10 +615,6 @@ namespace App\Models {
     /**
      * App\Models\UserHasRole
      *
-     * @property string $id_rol
-     * @property mixed $id_user
-     * @method static \Illuminate\Database\Eloquent\Builder<UserHasRole>|UserHasRole whereIdUser($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<UserHasRole>|UserHasRole whereIdRol($value)
      * @method static \Illuminate\Database\Eloquent\Builder<UserHasRole>|UserHasRole newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<UserHasRole>|UserHasRole newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<UserHasRole>|UserHasRole query()

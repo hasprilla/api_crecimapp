@@ -92,7 +92,13 @@ class UserService
 
     public function findById(int $id): ?User
     {
-        return User::with('roles')->findOrFail($id);
+        $user = User::with('roles')->findOrFail($id);
+
+        if ($user->image) {
+            $user->image = url($user->image);
+        }
+
+        return $user;
     }
 
     public function update(int $id, UpdateUserRequest $request)
@@ -112,8 +118,8 @@ class UserService
                 $user->phone = $request->input('phone');
             }
 
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
                 $path = $file->store("users/{$user->id}", 'public');
                 $user->image = '/storage/'.$path;
             }
