@@ -128,3 +128,50 @@ Route::get('storage-config-debug', function () {
         'link_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : 'No link',
     ];
 });
+
+
+
+
+Route::get('test-file-mime', function() {
+    $testPath = 'users/19/OYNHnyDeAzcliVuHn1pvvDgnkdaOX68F5gZKqgOB.png';
+    
+    if (!Storage::disk('public')->exists($testPath)) {
+        return ['error' => 'File not found: ' . $testPath];
+    }
+    
+    $filePath = Storage::disk('public')->path($testPath);
+    
+    return [
+        'file_exists' => true,
+        'physical_path' => $filePath,
+        'mime_content_type' => mime_content_type($filePath),
+        'file_extension' => pathinfo($testPath, PATHINFO_EXTENSION),
+        'file_size' => Storage::disk('public')->size($testPath)
+    ];
+});
+
+Route::get('storage/{path}', function ($path) {
+    try {
+        if (!Storage::disk('public')->exists($path)) {
+            return response()->json([
+                'error' => 'File not found',
+                'path' => $path
+            ], 404);
+        }
+
+        $fileContent = Storage::disk('public')->get($path);
+        $filePath = Storage::disk('public')->path($path);
+        $mimeType = mime_content_type($filePath);
+        
+        return Response::make($fileContent, 200)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline')
+            ->header('Cache-Control', 'public, max-age=31536000');
+            
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Server error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+})->where('path', '.*');
