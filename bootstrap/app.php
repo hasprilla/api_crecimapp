@@ -7,7 +7,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -18,6 +17,20 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'jwt.auth' => JwtMiddleware::class,
+        ]);
+
+        // Configuración CORS para producción
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // Middleware CORS global para todas las rutas API
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+        // Configuración específica de CORS
+        $middleware->validateCsrfTokens(except: [
+            'https://apicrecimapp.haaspes.space/*',
+            'api/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
