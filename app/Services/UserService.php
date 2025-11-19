@@ -101,6 +101,38 @@ class UserService
         return $user;
     }
 
+    // public function update(int $id, UpdateUserRequest $request)
+    // {
+    //     return DB::transaction(function () use ($id, $request) {
+    //         $user = User::with('roles')->findOrFail($id);
+
+    //         if ($request->filled('name')) {
+    //             $user->name = $request->input('name');
+    //         }
+
+    //         if ($request->filled('lastname')) {
+    //             $user->lastname = $request->input('lastname');
+    //         }
+
+    //         if ($request->filled('phone')) {
+    //             $user->phone = $request->input('phone');
+    //         }
+
+    //         if ($request->hasFile('image')) {
+    //             $file = $request->file('image');
+    //             $path = $file->store("users/{$user->id}", 'public');
+
+    //             // Guardar solo el path relativo
+    //             $user->image = $path;
+    //         }
+
+    //         $user->save();
+
+    //         // No necesitas modificar image aquí, el accessor se encarga
+    //         return $user;
+    //     });
+    // }
+
     public function update(int $id, UpdateUserRequest $request)
     {
         return DB::transaction(function () use ($id, $request) {
@@ -121,14 +153,12 @@ class UserService
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $path = $file->store("users/{$user->id}", 'public');
-
-                // Guardar solo el path relativo
-                $user->image = $path;
+                // Guardar solo el path relativo, sin "/storage/"
+                $user->image = $path; // ← users/19/archivo.png
             }
 
             $user->save();
 
-            // No necesitas modificar image aquí, el accessor se encarga
             return $user;
         });
     }
