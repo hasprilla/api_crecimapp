@@ -121,15 +121,15 @@ class UserService
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $path = $file->store("users/{$user->id}", 'public');
-                $user->image = '/storage/'.$path;
+
+                // Guardar solo el path relativo
+                $user->image = $path;
             }
 
             $user->save();
 
-            $user->image = url($user->image);
-
+            // No necesitas modificar image aquí, el accessor se encarga
             return $user;
-
         });
     }
 }
