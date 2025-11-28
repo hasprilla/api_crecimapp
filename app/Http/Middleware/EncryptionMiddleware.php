@@ -27,23 +27,53 @@ class EncryptionMiddleware
             $data = $request->input('data');
             if ($data) {
                 try {
-                    $decrypted = openssl_decrypt(
-                        $data,
-                        'AES-256-CTR',
-                        $key,
-                        0,
-                        $iv
-                    );
+                    \Log::info('Encryption Middleware - Received encrypted data', [
+                        'data_length' => strlen($data),
+                        'data_preview' => substr($data, 0, 50)
+                    ]);
 
-                    if ($decrypted) {
+                    $decoded = base64_decode($data, true);
+if ($decoded === false) {
+    \Log::error('Encryption Middleware - Base64 decode failed for request payload');
+    $decrypted = false;
+} else {
+    $decrypted = openssl_decrypt(
+        $decoded,
+        'AES-256-CTR',
+        $key,
+        OPENSSL_RAW_DATA,
+        $iv
+    );
+}
+
+                    if ($decrypted === false) {
+                        \Log::error('Encryption Middleware - Decryption failed', [
+                            'openssl_error' => openssl_error_string()
+                        ]);
+                    } else {
+                        \Log::info('Encryption Middleware - Decryption successful', [
+                            'decrypted' => $decrypted
+                        ]);
+
                         $json = json_decode($decrypted, true);
                         if ($json) {
+                            \Log::info('Encryption Middleware - JSON decoded successfully', [
+                                'fields' => array_keys($json)
+                            ]);
                             $request->replace($json);
+                        } else {
+                            \Log::error('Encryption Middleware - JSON decode failed', [
+                                'json_error' => json_last_error_msg()
+                            ]);
                         }
                     }
                 } catch (\Exception $e) {
-                    // Handle decryption error or ignore
+                    \Log::error('Encryption Middleware - Exception during decryption', [
+                        'error' => $e->getMessage()
+                    ]);
                 }
+            } else {
+                \Log::info('Encryption Middleware - No encrypted data field found in request');
             }
         }
 
@@ -56,15 +86,15 @@ class EncryptionMiddleware
                 try {
                     $jsonString = json_encode($content);
                     $encrypted = openssl_encrypt(
-                        $jsonString,
-                        'AES-256-CTR',
-                        $key,
-                        0,
-                        $iv
-                    );
+        $jsonString,
+        'AES-256-CTR',
+        $key,
+        OPENSSL_RAW_DATA,
+        $iv
+    );
 
-                    if ($encrypted) {
-                        $response->setData(['data' => $encrypted]);
+                    if ($encrypted !== false) {
+                        $response->setData(['data' => base64_encode($encrypted)]);
                     }
                 } catch (\Exception $e) {
                     // Handle encryption error or ignore
