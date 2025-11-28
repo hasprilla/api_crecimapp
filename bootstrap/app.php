@@ -19,6 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.auth' => JwtMiddleware::class,
         ]);
 
+        // Encryption middleware must run FIRST to decrypt data before validation
+        $middleware->priority([
+            \App\Http\Middleware\EncryptionMiddleware::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
         // Configuración CORS para producción
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
