@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Configuración CORS para producción
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \App\Http\Middleware\EncryptionMiddleware::class,
         ]);
 
         // Middleware CORS global para todas las rutas API
